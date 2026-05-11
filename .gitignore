@@ -1,0 +1,4 @@
+gtfs_data/
+__pycache__/
+.idea/
+*.zip
