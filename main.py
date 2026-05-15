@@ -6,7 +6,7 @@ from planner import JourneyPlanner
 
 def main():
     print("======================================")
-    print("🚆 SBB CLI PLANNER 🇨🇭")
+    print(" SBB  🇨🇭")
     print("======================================")
 
     # 1. Daten laden
@@ -18,25 +18,42 @@ def main():
     start_name = input("Von: ")
     end_name = input("Nach: ")
 
-    # Datum
-    target_date = input("Reisedatum DD.MM.YYYY: ")
-    if not target_date:
-        target_date = datetime.now().strftime("%d.%m.%Y")
+    # Intelligente Datumsprüfung
+    while True:
+        target_date = input("Reisedatum DD.MM.YYYY): ")
+        if not target_date:
+            target_date = datetime.now().strftime("%d.%m.%Y")
+            break
+        try:
 
-    # Zeit
-    start_time_str = input("Abfahrtszeit HH:MM: ")
-    if not start_time_str:
-        now = datetime.now()
-        start_mins = now.hour * 60 + now.minute
-    else:
-        hh, mm = map(int, start_time_str.split(":"))
-        start_mins = hh * 60 + mm
+            valid_date = datetime.strptime(target_date, "%d.%m.%Y")
+            target_date = valid_date.strftime("%d.%m.%Y")
+            break
+        except ValueError:
+            print("⚠️ Fehler: Ungültiges Datum.")
+
+    # Intelligente Zeitprüfung
+    while True:
+        start_time_str = input("Abfahrtszeit HH:MM: ")
+        if not start_time_str:
+            now = datetime.now()
+            start_mins = now.hour * 60 + now.minute
+            break
+        try:
+            hh, mm = map(int, start_time_str.split(":"))
+            if 0 <= hh <= 23 and 0 <= mm <= 59:
+                start_mins = hh * 60 + mm
+                break
+            else:
+                print("⚠️ Fehler: Ungültige Zeit.")
+        except ValueError:
+            print("⚠️ Fehler: Format HH:MM.")
 
     # Mobilitätswahl
     print("\nWie möchten Sie reisen?")
-    print("1 - Bequem 15 Minuten ")
-    print("2 - Standard 8 Minuten")
-    print("3 - Speed 4 Minuten ")
+    print("1 - Bequem 15 Minuten")
+    print("2 - Standard 8 Minuten)")
+    print("3 - Speed 4 Minuten")
 
     choice = input("Wählen Sie 1, 2 oder 3: ")
 
@@ -46,12 +63,15 @@ def main():
         print("-> Bequemer Modus ausgewählt.")
     elif choice == "3":
         mobility = "fast"
-        print("-> Schneller Modus ausgewählt.")
+        print("->Schneller Modus ausgewählt.")
     else:
         print("-> Standardmodus ausgewählt.")
 
-    # 3.Planer starten
+    # 3. Planer starten
     planner.smart_routing(start_name, end_name, start_mins, target_date, mobility_type=mobility)
+
+
+
 
 
 if __name__ == "__main__":
